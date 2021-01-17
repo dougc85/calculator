@@ -75,6 +75,8 @@ function addClick(e) {
         firstNumberComplete = true;
     } else {
         calculate(e);
+        screenCurrent = "Ans + ";
+        screen.textContent = screenCurrent;
         addActive = true;
     }
 }
@@ -90,21 +92,98 @@ function subtractClick(e) {
         firstNumberComplete = true;
     } else {
         calculate(e);
+        screenCurrent = "Ans - ";
+        screen.textContent = screenCurrent;
         subtractActive = true;
     }
 }
 
+//Multiply
+multiply.addEventListener('click', multiplyClick);
+
+function multiplyClick(e) {
+    if ((firstNumber.length > 0) && !firstNumberComplete) {
+        screenCurrent += " x ";
+        screen.textContent = screenCurrent;
+        multiplyActive = true;
+        firstNumberComplete = true;
+    } else {
+        calculate(e);
+        screenCurrent = "Ans x ";
+        screen.textContent = screenCurrent;
+        multiplyActive = true;
+    }
+}
+
+//Divide
+divide.addEventListener('click', divideClick);
+
+function divideClick(e) {
+    if ((firstNumber.length > 0) && !firstNumberComplete) {
+        screenCurrent += " x ";
+        screen.textContent = screenCurrent;
+        divideActive = true;
+        firstNumberComplete = true;
+    } else {
+        calculate(e);
+        screenCurrent = "Ans / ";
+        screen.textContent = screenCurrent;
+        divideActive = true;
+    }
+}
 
 function calculate(e) {
     if (addActive) {
-        answer = (parseInt(firstNumber) + parseInt(secondNumber)).toString();
+        if (firstNumber.includes(".") || secondNumber.includes(".")) {
+            answer = (parseFloat(firstNumber) + parseFloat(secondNumber)).toFixed(14);
+        } else {
+            answer = (parseInt(firstNumber) + parseInt(secondNumber)).toString();
+        }
         answerActive = true;
         firstNumber = answer;
         firstNumberComplete = true;
-        screenCurrent = "Ans + ";
-        screen.textContent = screenCurrent;
         screenPrevious = `Ans = ${firstNumber}`;
         littleScreen.textContent = screenPrevious;
         secondNumber = "";
+        addActive = false;
+    } else if (subtractActive) {
+        if (firstNumber.includes(".") || secondNumber.includes(".")) {
+            answer = (parseFloat(firstNumber) - parseFloat(secondNumber)).toFixed(14);
+        } else {
+            answer = (parseInt(firstNumber) - parseInt(secondNumber)).toString();
+        }
+        answerActive = true;
+        firstNumber = answer;
+        firstNumberComplete = true;
+        screenPrevious = `Ans = ${firstNumber}`;
+        littleScreen.textContent = screenPrevious;
+        secondNumber = "";
+        subtractActive = false;
+    } else if (multiplyActive) {
+        if (firstNumber.includes(".") || secondNumber.includes(".")) {
+            answer = (parseFloat(firstNumber) * parseFloat(secondNumber)).toFixed(14);
+        } else {
+            answer = (parseInt(firstNumber) * parseInt(secondNumber)).toString();
+        }
+        answerActive = true;
+        firstNumber = answer;
+        firstNumberComplete = true;
+        screenPrevious = `Ans = ${firstNumber}`;
+        littleScreen.textContent = screenPrevious;
+        secondNumber = "";
+        multiplyActive = false;
+    } else if (divideActive) {
+        if (firstNumber.includes(".") || secondNumber.includes(".")) {
+            answer = (parseFloat(firstNumber) / parseFloat(secondNumber)).toFixed(14);
+        } else {
+            answer = (parseInt(firstNumber) / parseInt(secondNumber)).toString();
+        }
+        answerActive = true;
+        firstNumber = answer;
+        firstNumberComplete = true;
+        screenPrevious = `Ans = ${firstNumber}`;
+        littleScreen.textContent = screenPrevious;
+        secondNumber = "";
+        divideActive = false;
     }
 }
