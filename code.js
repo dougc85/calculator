@@ -12,7 +12,7 @@ const nine = document.getElementById('nine');
 const numbers = [one, two, three, four, five, six, seven, eight, nine];
 
 const answerButton = document.getElementById('ans');
-const clear = document.getElementById('clear');
+const squareRoot = document.getElementById('square-root');
 const power = document.getElementById('power');
 const negButton = document.getElementById('neg');
 const equals = document.getElementById('equals');
@@ -46,6 +46,14 @@ let operations = {
     equals: {
         active: false,
         symbol: '='
+    },
+    squareRoot: {
+        active: false,
+        symbol: 'n/a'
+    },
+    power: {
+        active: false,
+        symbol: '^'
     }
 }
 
@@ -60,25 +68,31 @@ let secondNumber = "";
 let screenPrevious = "";
 let screenCurrent = "";
 
+let sqrtAllow = false;
+
 //Numbers
 numbers.forEach(num => num.addEventListener('click', numberClick));
 
 function numberClick(e) {
-    if (operations.equals.active) {
+    if (operations.equals.active || operations.squareRoot.active) {
         screenCurrent = e.target.textContent;
         screen.textContent = screenCurrent;
         firstNumber = e.target.textContent;
         firstNumberComplete = false;
         operations.equals.active = false;
+        operations.squareRoot.active = false;
         secondNumber = ""
+        sqrtAllow = true;
     }else if (!firstNumberComplete) {
         screenCurrent += e.target.textContent;
         screen.textContent = screenCurrent;
         firstNumber += e.target.textContent;
+        sqrtAllow = true;
     } else {
         screenCurrent += e.target.textContent;
         screen.textContent = screenCurrent;
         secondNumber += e.target.textContent;
+        sqrtAllow = false;
     }
 }
 
@@ -93,6 +107,9 @@ function zeroClick(e) {
 add.addEventListener('click', addClick);
 
 function addClick(e) {
+
+    sqrtAllow = false;
+    operations.squareRoot.active = false;
 
     if (operations.equals.active) {
         for (op in operations) {
@@ -122,6 +139,10 @@ function addClick(e) {
 subtract.addEventListener('click', subtractClick);
 
 function subtractClick(e) {
+
+    sqrtAllow = false;
+    operations.squareRoot.active = false;
+
     if (operations.equals.active) {
         for (op in operations) {
             operations[op].active = false;
@@ -150,6 +171,10 @@ function subtractClick(e) {
 multiply.addEventListener('click', multiplyClick);
 
 function multiplyClick(e) {
+
+    sqrtAllow = false;
+    operations.squareRoot.active = false;
+
     if (operations.equals.active) {
         for (op in operations) {
             operations[op].active = false;
@@ -178,6 +203,10 @@ function multiplyClick(e) {
 divide.addEventListener('click', divideClick);
 
 function divideClick(e) {
+
+    sqrtAllow = false;
+    operations.squareRoot.active = false;
+
     if (operations.equals.active) {
         for (op in operations) {
             operations[op].active = false;
@@ -202,11 +231,75 @@ function divideClick(e) {
     }
 }
 
+//Power
+power.addEventListener('click', powerClick);
+
+function powerClick(e) {
+
+    sqrtAllow = false;
+    operations.squareRoot.active = false;
+
+    if (operations.equals.active) {
+        for (op in operations) {
+            operations[op].active = false;
+        }
+        screenCurrent = "Ans ^ ";
+        screen.textContent = screenCurrent;
+        operations.power.active = true;
+        secondNumber = "";
+    } else if ((firstNumber.length > 0) && !firstNumberComplete) {
+        for (op in operations) {
+            operations[op].active = false;
+        }
+        screenCurrent += " ^ ";
+        screen.textContent = screenCurrent;
+        operations.power.active = true;
+        firstNumberComplete = true;
+    } else {
+        calculate(e);
+        screenCurrent = "Ans ^ ";
+        screen.textContent = screenCurrent;
+        operations.power.active = true;
+    }
+}
+
+// Square Root
+squareRoot.addEventListener('click', squareRootClick);
+
+function squareRootClick(c) {
+    if (sqrtAllow) {
+        answer = Math.sqrt(parseFloat(firstNumber)).toFixed(14);
+        if (answer.includes(".")) {
+            while (answer.charAt(answer.length - 1) === "0") {
+                answer = answer.slice(0, -1);
+            }
+            if (answer.charAt(answer.length - 1) === ".") {
+                answer = answer.slice(0, -1);
+            }
+        }
+
+        answerActive = true;
+        firstNumber = answer;
+        firstNumberComplete = true;
+        screenCurrent = firstNumber;
+        screen.textContent = screenCurrent;
+        screenPrevious = `Ans = ${firstNumber}`;
+        littleScreen.textContent = screenPrevious;
+        secondNumber = "";
+        operations.squareRoot.active = true;
+    }
+    
+}
+
 //Equals
 equals.addEventListener('click', equalsClick);
 
 function equalsClick(e) {
     
+    if (operations.squareRoot.active) {
+        squareRootClick(e);
+        return;
+    }
     let allOff = true;
     let currentOp = {};
 
@@ -228,6 +321,7 @@ function equalsClick(e) {
         currentOp.active = true;
         secondNumber = temp;
         operations.equals.active = true;
+        sqrtAllow = true;
     }
 }
 
@@ -348,5 +442,34 @@ function calculate(e) {
         littleScreen.textContent = screenPrevious;
         secondNumber = "";
         operations.divide.active = false;
+    } else if (operations.power.active) {
+        if (firstNumber.includes(".") || secondNumber.includes(".")) {
+            answer = (parseFloat(firstNumber) ** parseFloat(secondNumber)).toFixed(14);
+            if (answer.includes(".")) {
+                while (answer.charAt(answer.length - 1) === "0") {
+                    answer = answer.slice(0, -1);
+                }
+                if (answer.charAt(answer.length - 1) === ".") {
+                    answer = answer.slice(0, -1);
+                }
+            }
+        } else {
+            answer = (parseInt(firstNumber) ** parseInt(secondNumber)).toString();
+            if (answer.includes(".")) {
+                while (answer.charAt(answer.length - 1) === "0") {
+                    answer = answer.slice(0, -1);
+                }
+                if (answer.charAt(answer.length - 1) === ".") {
+                    answer = answer.slice(0, -1);
+                }
+            }
+        }
+        answerActive = true;
+        firstNumber = answer;
+        firstNumberComplete = true;
+        screenPrevious = `Ans = ${firstNumber}`;
+        littleScreen.textContent = screenPrevious;
+        secondNumber = "";
+        operations.power.active = false;
     }
 }
