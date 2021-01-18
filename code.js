@@ -26,10 +26,28 @@ const divide = document.getElementById('divide');
 const screen = document.getElementById('screen');
 const littleScreen = document.getElementById('little-screen');
 
-let addActive = false;
-let subtractActive = false;
-let multiplyActive = false;
-let divideActive = false;
+let operations = {
+    add: {
+        active: false,
+        symbol: '+'
+    },
+    subtract: {
+        active: false,
+        symbol: '-'
+    },
+    multiply: {
+        active: false,
+        symbol: 'x'
+    },
+    divide: {
+        active: false,
+        symbol: '/'
+    },
+    equals: {
+        active: false,
+        symbol: '='
+    }
+}
 
 let firstNumber = "";
 let firstNumberComplete = false;
@@ -46,7 +64,14 @@ let screenCurrent = "";
 numbers.forEach(num => num.addEventListener('click', numberClick));
 
 function numberClick(e) {
-    if (!firstNumberComplete) {
+    if (operations.equals.active) {
+        screenCurrent = e.target.textContent;
+        screen.textContent = screenCurrent;
+        firstNumber = e.target.textContent;
+        firstNumberComplete = false;
+        operations.equals.active = false;
+        secondNumber = ""
+    }else if (!firstNumberComplete) {
         screenCurrent += e.target.textContent;
         screen.textContent = screenCurrent;
         firstNumber += e.target.textContent;
@@ -68,16 +93,28 @@ function zeroClick(e) {
 add.addEventListener('click', addClick);
 
 function addClick(e) {
-    if ((firstNumber.length > 0) && !firstNumberComplete) {
+
+    if (operations.equals.active) {
+        for (op in operations) {
+            operations[op].active = false;
+        }
+        screenCurrent = "Ans + ";
+        screen.textContent = screenCurrent;
+        operations.add.active = true;
+        secondNumber = "";
+    } else if ((firstNumber.length > 0) && !firstNumberComplete) {
+        for (op in operations) {
+            operations[op].active = false;
+        }
         screenCurrent += " + ";
         screen.textContent = screenCurrent;
-        addActive = true;
+        operations.add.active = true;
         firstNumberComplete = true;
     } else {
         calculate(e);
         screenCurrent = "Ans + ";
         screen.textContent = screenCurrent;
-        addActive = true;
+        operations.add.active = true;
     }
 }
 
@@ -85,16 +122,27 @@ function addClick(e) {
 subtract.addEventListener('click', subtractClick);
 
 function subtractClick(e) {
-    if ((firstNumber.length > 0) && !firstNumberComplete) {
+    if (operations.equals.active) {
+        for (op in operations) {
+            operations[op].active = false;
+        }
+        screenCurrent = "Ans - ";
+        screen.textContent = screenCurrent;
+        operations.subtract.active = true;
+        secondNumber = "";
+    } else if ((firstNumber.length > 0) && !firstNumberComplete) {
+        for (op in operations) {
+            operations[op].active = false;
+        }
         screenCurrent += " - ";
         screen.textContent = screenCurrent;
-        subtractActive = true;
+        operations.subtract.active = true;
         firstNumberComplete = true;
     } else {
         calculate(e);
         screenCurrent = "Ans - ";
         screen.textContent = screenCurrent;
-        subtractActive = true;
+        operations.subtract.active = true;
     }
 }
 
@@ -102,16 +150,27 @@ function subtractClick(e) {
 multiply.addEventListener('click', multiplyClick);
 
 function multiplyClick(e) {
-    if ((firstNumber.length > 0) && !firstNumberComplete) {
+    if (operations.equals.active) {
+        for (op in operations) {
+            operations[op].active = false;
+        }
+        screenCurrent = "Ans x ";
+        screen.textContent = screenCurrent;
+        operations.multiply.active = true;
+        secondNumber = "";
+    } else if ((firstNumber.length > 0) && !firstNumberComplete) {
+        for (op in operations) {
+            operations[op].active = false;
+        }
         screenCurrent += " x ";
         screen.textContent = screenCurrent;
-        multiplyActive = true;
+        operations.multiply.active = true;
         firstNumberComplete = true;
     } else {
         calculate(e);
         screenCurrent = "Ans x ";
         screen.textContent = screenCurrent;
-        multiplyActive = true;
+        operations.multiply.active = true;
     }
 }
 
@@ -119,25 +178,81 @@ function multiplyClick(e) {
 divide.addEventListener('click', divideClick);
 
 function divideClick(e) {
-    if ((firstNumber.length > 0) && !firstNumberComplete) {
-        screenCurrent += " x ";
+    if (operations.equals.active) {
+        for (op in operations) {
+            operations[op].active = false;
+        }
+        screenCurrent = "Ans / ";
         screen.textContent = screenCurrent;
-        divideActive = true;
+        operations.divide.active = true;
+        secondNumber = "";
+    } else if ((firstNumber.length > 0) && !firstNumberComplete) {
+        for (op in operations) {
+            operations[op].active = false;
+        }
+        screenCurrent += " / ";
+        screen.textContent = screenCurrent;
+        operations.divide.active = true;
         firstNumberComplete = true;
     } else {
         calculate(e);
         screenCurrent = "Ans / ";
         screen.textContent = screenCurrent;
-        divideActive = true;
+        operations.divide.active = true;
+    }
+}
+
+//Equals
+equals.addEventListener('click', equalsClick);
+
+function equalsClick(e) {
+    
+    let allOff = true;
+    let currentOp = {};
+
+    for (op in operations) {
+        if (operations[op].symbol === "=") {
+            continue;
+        } else if (operations[op].active) {
+            allOff = false;
+            currentOp = operations[op];
+        }
+    }
+    if (allOff || secondNumber.length === 0) {
+        return;
+    } else {
+        let temp = secondNumber;
+        calculate(e);
+        screenCurrent = firstNumber;
+        screen.textContent = screenCurrent;
+        currentOp.active = true;
+        secondNumber = temp;
+        operations.equals.active = true;
     }
 }
 
 function calculate(e) {
-    if (addActive) {
+    if (operations.add.active) {
         if (firstNumber.includes(".") || secondNumber.includes(".")) {
             answer = (parseFloat(firstNumber) + parseFloat(secondNumber)).toFixed(14);
+            if (answer.includes(".")) {
+                while (answer.charAt(answer.length - 1) === "0") {
+                    answer = answer.slice(0, -1);
+                }
+                if (answer.charAt(answer.length - 1) === ".") {
+                    answer = answer.slice(0, -1);
+                }
+            }
         } else {
             answer = (parseInt(firstNumber) + parseInt(secondNumber)).toString();
+            if (answer.includes(".")) {
+                while (answer.charAt(answer.length - 1) === "0") {
+                    answer = answer.slice(0, -1);
+                }
+                if (answer.charAt(answer.length - 1) === ".") {
+                    answer = answer.slice(0, -1);
+                }
+            }
         }
         answerActive = true;
         firstNumber = answer;
@@ -145,12 +260,28 @@ function calculate(e) {
         screenPrevious = `Ans = ${firstNumber}`;
         littleScreen.textContent = screenPrevious;
         secondNumber = "";
-        addActive = false;
-    } else if (subtractActive) {
+        operations.add.active = false;
+    } else if (operations.subtract.active) {
         if (firstNumber.includes(".") || secondNumber.includes(".")) {
             answer = (parseFloat(firstNumber) - parseFloat(secondNumber)).toFixed(14);
+            if (answer.includes(".")) {
+                while (answer.charAt(answer.length - 1) === "0") {
+                    answer = answer.slice(0, -1);
+                }
+                if (answer.charAt(answer.length - 1) === ".") {
+                    answer = answer.slice(0, -1);
+                }
+            }
         } else {
             answer = (parseInt(firstNumber) - parseInt(secondNumber)).toString();
+            if (answer.includes(".")) {
+                while (answer.charAt(answer.length - 1) === "0") {
+                    answer = answer.slice(0, -1);
+                }
+                if (answer.charAt(answer.length - 1) === ".") {
+                    answer = answer.slice(0, -1);
+                }
+            }
         }
         answerActive = true;
         firstNumber = answer;
@@ -158,12 +289,28 @@ function calculate(e) {
         screenPrevious = `Ans = ${firstNumber}`;
         littleScreen.textContent = screenPrevious;
         secondNumber = "";
-        subtractActive = false;
-    } else if (multiplyActive) {
+        operations.subtract.active = false;
+    } else if (operations.multiply.active) {
         if (firstNumber.includes(".") || secondNumber.includes(".")) {
             answer = (parseFloat(firstNumber) * parseFloat(secondNumber)).toFixed(14);
+            if (answer.includes(".")) {
+                while (answer.charAt(answer.length - 1) === "0") {
+                    answer = answer.slice(0, -1);
+                }
+                if (answer.charAt(answer.length - 1) === ".") {
+                    answer = answer.slice(0, -1);
+                }
+            }
         } else {
             answer = (parseInt(firstNumber) * parseInt(secondNumber)).toString();
+            if (answer.includes(".")) {
+                while (answer.charAt(answer.length - 1) === "0") {
+                    answer = answer.slice(0, -1);
+                }
+                if (answer.charAt(answer.length - 1) === ".") {
+                    answer = answer.slice(0, -1);
+                }
+            }
         }
         answerActive = true;
         firstNumber = answer;
@@ -171,12 +318,28 @@ function calculate(e) {
         screenPrevious = `Ans = ${firstNumber}`;
         littleScreen.textContent = screenPrevious;
         secondNumber = "";
-        multiplyActive = false;
-    } else if (divideActive) {
+        operations.multiply.active = false;
+    } else if (operations.divide.active) {
         if (firstNumber.includes(".") || secondNumber.includes(".")) {
             answer = (parseFloat(firstNumber) / parseFloat(secondNumber)).toFixed(14);
+            if (answer.includes(".")) {
+                while (answer.charAt(answer.length - 1) === "0") {
+                    answer = answer.slice(0, -1);
+                }
+                if (answer.charAt(answer.length - 1) === ".") {
+                    answer = answer.slice(0, -1);
+                }
+            }
         } else {
             answer = (parseInt(firstNumber) / parseInt(secondNumber)).toString();
+            if (answer.includes(".")) {
+                while (answer.charAt(answer.length - 1) === "0") {
+                    answer = answer.slice(0, -1);
+                }
+                if (answer.charAt(answer.length - 1) === ".") {
+                    answer = answer.slice(0, -1);
+                }
+            }
         }
         answerActive = true;
         firstNumber = answer;
@@ -184,6 +347,6 @@ function calculate(e) {
         screenPrevious = `Ans = ${firstNumber}`;
         littleScreen.textContent = screenPrevious;
         secondNumber = "";
-        divideActive = false;
+        operations.divide.active = false;
     }
 }
