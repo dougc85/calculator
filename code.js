@@ -76,10 +76,16 @@ let negAllow = false;
 let negFirst = false;
 let negSecond = false;
 
+let answerClickedFirst = false;
+let answerClickedSecond = false;
+
 //Numbers
 numbers.forEach(num => num.addEventListener('click', numberClick));
 
 function numberClick(e) {
+    if (answerClickedFirst || answerClickedSecond) {
+        return;
+    }
     if (operations.equals.active || operations.squareRoot.active) {
         screenCurrent = e.target.textContent;
         screen.textContent = screenCurrent;
@@ -115,17 +121,77 @@ function numberClick(e) {
     }
 }
 
+//Answer helper function
+function oneActiveOperation() {
+    for (op in operations) {
+        if (operations[op].active) {
+            return true;
+        } else {continue};
+    }
+    return false;
+}
+//Answer
+answerButton.addEventListener('click', answerClick);
+
+function answerClick(e) {
+    if (answerClickedFirst || answerClickedSecond) {
+        return;
+    }
+
+    if (answerActive) {
+        if (operations.equals.active || operations.squareRoot.active) {
+            screenCurrent = "Ans";
+            screen.textContent = screenCurrent;
+            firstNumber = answer;
+            firstNumberComplete = false;
+            answerClickedFirst = true;
+            operations.equals.active = false;
+            operations.squareRoot.active = false;
+            secondNumber = ""
+            sqrtAllow = true;
+    
+            negAllow = true;
+            negFirst = true;
+            negSecond = false;
+        } else if (oneActiveOperation() && (secondNumber.length == 0)) {
+            screenCurrent += "Ans";
+            screen.textContent = screenCurrent;
+            secondNumber = answer;
+            answerClickedSecond = true;
+
+            negAllow - true;
+            negFirst = false;
+            negSecond = true;
+        }
+    }
+}
+
 //Zero
 zero.addEventListener('click', zeroClick);
 
 function zeroClick(e) {
-    return;
+    if (answerClickedFirst || answerClickedSecond) {
+        return;
+    }
 }
+
+//Decimal
+
+// if (answerClickedFirst || answerClickedSecond) {
+//     return;
+// }
 
 //Add
 add.addEventListener('click', addClick);
 
 function addClick(e) {
+    if (answerClickedFirst || answerClickedSecond) {
+        answerClickedFirst = false;
+        answerClickedSecond = false;
+    }
+    if (firstNumber.length === 0) {
+        return;
+    }
 
     sqrtAllow = false;
     operations.squareRoot.active = false;
@@ -142,7 +208,7 @@ function addClick(e) {
         operations.add.active = true;
         secondNumber = "";
     } else if ((firstNumber.length > 0) && !firstNumberComplete) {
-        negAllow = true;
+        negAllow = false;
         negFirst = false;
         negSecond = true;
         for (op in operations) {
@@ -153,7 +219,7 @@ function addClick(e) {
         operations.add.active = true;
         firstNumberComplete = true;
     } else {
-        negAllow = true;
+        negAllow = false;
         negFirst = false;
         negSecond = true;
         calculate(e);
@@ -168,6 +234,15 @@ subtract.addEventListener('click', subtractClick);
 
 function subtractClick(e) {
 
+    if (answerClickedFirst || answerClickedSecond) {
+        answerClickedFirst = false;
+        answerClickedSecond = false;
+    }
+
+    if (firstNumber.length === 0) {
+        return;
+    }
+
     sqrtAllow = false;
     operations.squareRoot.active = false;
 
@@ -183,7 +258,7 @@ function subtractClick(e) {
         operations.subtract.active = true;
         secondNumber = "";
     } else if ((firstNumber.length > 0) && !firstNumberComplete) {
-        negAllow = true;
+        negAllow = false;
         negFirst = false;
         negSecond = true;
         for (op in operations) {
@@ -194,7 +269,7 @@ function subtractClick(e) {
         operations.subtract.active = true;
         firstNumberComplete = true;
     } else {
-        negAllow = true;
+        negAllow = false;
         negFirst = false;
         negSecond = true;
         calculate(e);
@@ -209,6 +284,15 @@ multiply.addEventListener('click', multiplyClick);
 
 function multiplyClick(e) {
 
+    if (answerClickedFirst || answerClickedSecond) {
+        answerClickedFirst = false;
+        answerClickedSecond = false;
+    }
+
+    if (firstNumber.length === 0) {
+        return;
+    }
+
     sqrtAllow = false;
     operations.squareRoot.active = false;
 
@@ -224,7 +308,7 @@ function multiplyClick(e) {
         operations.multiply.active = true;
         secondNumber = "";
     } else if ((firstNumber.length > 0) && !firstNumberComplete) {
-        negAllow = true;
+        negAllow = false;
         negFirst = false;
         negSecond = true;
         for (op in operations) {
@@ -235,7 +319,7 @@ function multiplyClick(e) {
         operations.multiply.active = true;
         firstNumberComplete = true;
     } else {
-        negAllow = true;
+        negAllow = false;
         negFirst = false;
         negSecond = true;
         calculate(e);
@@ -250,6 +334,15 @@ divide.addEventListener('click', divideClick);
 
 function divideClick(e) {
 
+    if (answerClickedFirst || answerClickedSecond) {
+        answerClickedFirst = false;
+        answerClickedSecond = false;
+    }
+
+    if (firstNumber.length === 0) {
+        return;
+    }
+
     sqrtAllow = false;
     operations.squareRoot.active = false;
 
@@ -265,7 +358,7 @@ function divideClick(e) {
         operations.divide.active = true;
         secondNumber = "";
     } else if ((firstNumber.length > 0) && !firstNumberComplete) {
-        negAllow = true;
+        negAllow = false;
         negFirst = false;
         negSecond = true;
         for (op in operations) {
@@ -276,7 +369,7 @@ function divideClick(e) {
         operations.divide.active = true;
         firstNumberComplete = true;
     } else {
-        negAllow = true;
+        negAllow = false;
         negFirst = false;
         negSecond = true;
         calculate(e);
@@ -291,6 +384,15 @@ power.addEventListener('click', powerClick);
 
 function powerClick(e) {
 
+    if (answerClickedFirst || answerClickedSecond) {
+        answerClickedFirst = false;
+        answerClickedSecond = false;
+    }
+
+    if (firstNumber.length === 0) {
+        return;
+    }
+
     sqrtAllow = false;
     operations.squareRoot.active = false;
 
@@ -306,7 +408,7 @@ function powerClick(e) {
         operations.power.active = true;
         secondNumber = "";
     } else if ((firstNumber.length > 0) && !firstNumberComplete) {
-        negAllow = true;
+        negAllow = false;
         negFirst = false;
         negSecond = true;
         for (op in operations) {
@@ -317,7 +419,7 @@ function powerClick(e) {
         operations.power.active = true;
         firstNumberComplete = true;
     } else {
-        negAllow = true;
+        negAllow = false;
         negFirst = false;
         negSecond = true;
         calculate(e);
@@ -331,6 +433,11 @@ function powerClick(e) {
 squareRoot.addEventListener('click', squareRootClick);
 
 function squareRootClick(c) {
+
+    if (firstNumber.length === 0) {
+        return;
+    }
+
     if (sqrtAllow) {
         answer = Math.sqrt(parseFloat(firstNumber)).toFixed(14);
         if (answer.includes(".")) {
@@ -363,28 +470,52 @@ function squareRootClick(c) {
 neg.addEventListener('click', negClick);
 
 function negClick(e) {
+
+    if (firstNumber.length === 0) {
+        return;
+    }
+
     if (negAllow) {
         if (negFirst) {
-            if (firstNumber[0] === "-") {
+            if (answerClickedFirst) {
+                if (screenCurrent[0] === "-") {
+                    firstNumber = (firstNumber * (-1)).toString();
+                    screenCurrent = screenCurrent.substring(1);
+                    screen.textContent = screenCurrent;
+                } else {
+                    firstNumber = (firstNumber * (-1)).toString();
+                    screenCurrent = "-".concat(screenCurrent);
+                    screen.textContent = screenCurrent;
+                }
+            } else if (firstNumber[0] === "-") {
                 firstNumber = firstNumber.substring(1);
                 screenCurrent = firstNumber;
                 screen.textContent = screenCurrent;
-            }
-            else {
+            } else {
                 firstNumber = "-".concat(firstNumber);
                 screenCurrent = firstNumber;
                 screen.textContent = screenCurrent;
             }
         } else if (negSecond) {
             let numberPos = screenCurrent.lastIndexOf(secondNumber);
-            if (secondNumber[0] === "(") {
+            if (answerClickedSecond) {
+                if (screenCurrent.slice(-6) === "(-Ans)") {
+                    secondNumber = (secondNumber * (-1)).toString();
+                    screenCurrent = screenCurrent.slice(0, -6).concat("Ans");
+                    screen.textContent = screenCurrent;
+                } else {
+                    console.log('here');
+                    secondNumber = (secondNumber * (-1)).toString();
+                    screenCurrent = screenCurrent.slice(0, -3).concat("(-Ans)");
+                    screen.textContent = screenCurrent;
+                }
+            } else if (secondNumber[0] === "(") {
                 screenCurrent = screenCurrent.slice(0, numberPos);
                 secondNumber = secondNumber.substring(2);
                 secondNumber = secondNumber.slice(0, -1); 
                 screenCurrent = screenCurrent.concat(secondNumber);
                 screen.textContent = screenCurrent;
-            }
-            else {
+            } else {
                 screenCurrent = screenCurrent.slice(0, numberPos);
                 secondNumber = "(-".concat(secondNumber, ")");
                 screenCurrent = screenCurrent.concat(secondNumber);
@@ -398,7 +529,12 @@ function negClick(e) {
 equals.addEventListener('click', equalsClick);
 
 function equalsClick(e) {
-    
+    if (answerClickedFirst) {
+        return;
+    }
+
+    answerClickedSecond = false;
+
     if (operations.squareRoot.active) {
         squareRootClick(e);
         return;
@@ -440,7 +576,7 @@ function calculate(e) {
     if (operations.add.active) {
         if (firstNumber.includes(".") || secondNumber.includes(".")) {
             answer = (parseFloat(firstNumber) + parseFloat(secondNumber)).toFixed(14);
-            if (answer.includes(".")) {
+            if (answer.includes(".") && !(answer.includes("e"))) {
                 while (answer.charAt(answer.length - 1) === "0") {
                     answer = answer.slice(0, -1);
                 }
@@ -450,7 +586,7 @@ function calculate(e) {
             }
         } else {
             answer = (parseInt(firstNumber) + parseInt(secondNumber)).toString();
-            if (answer.includes(".")) {
+            if (answer.includes(".") && !(answer.includes("e"))) {
                 while (answer.charAt(answer.length - 1) === "0") {
                     answer = answer.slice(0, -1);
                 }
@@ -469,7 +605,7 @@ function calculate(e) {
     } else if (operations.subtract.active) {
         if (firstNumber.includes(".") || secondNumber.includes(".")) {
             answer = (parseFloat(firstNumber) - parseFloat(secondNumber)).toFixed(14);
-            if (answer.includes(".")) {
+            if (answer.includes(".") && !(answer.includes("e"))) {
                 while (answer.charAt(answer.length - 1) === "0") {
                     answer = answer.slice(0, -1);
                 }
@@ -479,7 +615,7 @@ function calculate(e) {
             }
         } else {
             answer = (parseInt(firstNumber) - parseInt(secondNumber)).toString();
-            if (answer.includes(".")) {
+            if (answer.includes(".") && !(answer.includes("e"))) {
                 while (answer.charAt(answer.length - 1) === "0") {
                     answer = answer.slice(0, -1);
                 }
@@ -498,7 +634,7 @@ function calculate(e) {
     } else if (operations.multiply.active) {
         if (firstNumber.includes(".") || secondNumber.includes(".")) {
             answer = (parseFloat(firstNumber) * parseFloat(secondNumber)).toFixed(14);
-            if (answer.includes(".")) {
+            if (answer.includes(".") && !(answer.includes("e"))) {
                 while (answer.charAt(answer.length - 1) === "0") {
                     answer = answer.slice(0, -1);
                 }
@@ -508,7 +644,7 @@ function calculate(e) {
             }
         } else {
             answer = (parseInt(firstNumber) * parseInt(secondNumber)).toString();
-            if (answer.includes(".")) {
+            if (answer.includes(".") && !(answer.includes("e"))) {
                 while (answer.charAt(answer.length - 1) === "0") {
                     answer = answer.slice(0, -1);
                 }
@@ -527,7 +663,7 @@ function calculate(e) {
     } else if (operations.divide.active) {
         if (firstNumber.includes(".") || secondNumber.includes(".")) {
             answer = (parseFloat(firstNumber) / parseFloat(secondNumber)).toFixed(14);
-            if (answer.includes(".")) {
+            if (answer.includes(".") && !(answer.includes("e"))) {
                 while (answer.charAt(answer.length - 1) === "0") {
                     answer = answer.slice(0, -1);
                 }
@@ -537,7 +673,7 @@ function calculate(e) {
             }
         } else {
             answer = (parseInt(firstNumber) / parseInt(secondNumber)).toString();
-            if (answer.includes(".")) {
+            if (answer.includes(".") && !(answer.includes("e"))) {
                 while (answer.charAt(answer.length - 1) === "0") {
                     answer = answer.slice(0, -1);
                 }
@@ -556,7 +692,7 @@ function calculate(e) {
     } else if (operations.power.active) {
         if (firstNumber.includes(".") || secondNumber.includes(".")) {
             answer = (parseFloat(firstNumber) ** parseFloat(secondNumber)).toFixed(14);
-            if (answer.includes(".")) {
+            if (answer.includes(".") && !(answer.includes("e"))) {
                 while (answer.charAt(answer.length - 1) === "0") {
                     answer = answer.slice(0, -1);
                 }
@@ -566,7 +702,7 @@ function calculate(e) {
             }
         } else {
             answer = (parseInt(firstNumber) ** parseInt(secondNumber)).toString();
-            if (answer.includes(".")) {
+            if (answer.includes(".") && !(answer.includes("e"))) {
                 while (answer.charAt(answer.length - 1) === "0") {
                     answer = answer.slice(0, -1);
                 }
@@ -610,4 +746,7 @@ function allClearClick(e) {
     negAllow = true;
     negFirst = true;
     negSecond = false;
+
+    answerClickedFirst = false;
+    answerClickedSecond = false;
 }
