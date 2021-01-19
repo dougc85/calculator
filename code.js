@@ -14,9 +14,11 @@ const numbers = [one, two, three, four, five, six, seven, eight, nine];
 const answerButton = document.getElementById('ans');
 const squareRoot = document.getElementById('square-root');
 const power = document.getElementById('power');
-const negButton = document.getElementById('neg');
+const neg = document.getElementById('neg');
 const equals = document.getElementById('equals');
 const decimal = document.getElementById('point');
+const del = document.getElementById('delete');
+const allClear = document.getElementById('all-clear');
 
 const add = document.getElementById('add');
 const subtract = document.getElementById('subtract');
@@ -70,6 +72,10 @@ let screenCurrent = "";
 
 let sqrtAllow = false;
 
+let negAllow = false;
+let negFirst = false;
+let negSecond = false;
+
 //Numbers
 numbers.forEach(num => num.addEventListener('click', numberClick));
 
@@ -83,16 +89,29 @@ function numberClick(e) {
         operations.squareRoot.active = false;
         secondNumber = ""
         sqrtAllow = true;
+
+        negAllow = true;
+        negFirst = true;
+        negSecond = false;
+
     }else if (!firstNumberComplete) {
         screenCurrent += e.target.textContent;
         screen.textContent = screenCurrent;
         firstNumber += e.target.textContent;
         sqrtAllow = true;
+
+        negAllow = true;
+        negFirst = true;
+        negSecond = false;
     } else {
         screenCurrent += e.target.textContent;
         screen.textContent = screenCurrent;
         secondNumber += e.target.textContent;
         sqrtAllow = false;
+
+        negAllow = true;
+        negFirst = false;
+        negSecond = true;
     }
 }
 
@@ -112,6 +131,9 @@ function addClick(e) {
     operations.squareRoot.active = false;
 
     if (operations.equals.active) {
+        negAllow = false;
+        negFirst = false;
+        negSecond = false;
         for (op in operations) {
             operations[op].active = false;
         }
@@ -120,6 +142,9 @@ function addClick(e) {
         operations.add.active = true;
         secondNumber = "";
     } else if ((firstNumber.length > 0) && !firstNumberComplete) {
+        negAllow = true;
+        negFirst = false;
+        negSecond = true;
         for (op in operations) {
             operations[op].active = false;
         }
@@ -128,6 +153,9 @@ function addClick(e) {
         operations.add.active = true;
         firstNumberComplete = true;
     } else {
+        negAllow = true;
+        negFirst = false;
+        negSecond = true;
         calculate(e);
         screenCurrent = "Ans + ";
         screen.textContent = screenCurrent;
@@ -144,6 +172,9 @@ function subtractClick(e) {
     operations.squareRoot.active = false;
 
     if (operations.equals.active) {
+        negAllow = false;
+        negFirst = false;
+        negSecond = false;
         for (op in operations) {
             operations[op].active = false;
         }
@@ -152,6 +183,9 @@ function subtractClick(e) {
         operations.subtract.active = true;
         secondNumber = "";
     } else if ((firstNumber.length > 0) && !firstNumberComplete) {
+        negAllow = true;
+        negFirst = false;
+        negSecond = true;
         for (op in operations) {
             operations[op].active = false;
         }
@@ -160,6 +194,9 @@ function subtractClick(e) {
         operations.subtract.active = true;
         firstNumberComplete = true;
     } else {
+        negAllow = true;
+        negFirst = false;
+        negSecond = true;
         calculate(e);
         screenCurrent = "Ans - ";
         screen.textContent = screenCurrent;
@@ -176,6 +213,9 @@ function multiplyClick(e) {
     operations.squareRoot.active = false;
 
     if (operations.equals.active) {
+        negAllow = false;
+        negFirst = false;
+        negSecond = false;
         for (op in operations) {
             operations[op].active = false;
         }
@@ -184,6 +224,9 @@ function multiplyClick(e) {
         operations.multiply.active = true;
         secondNumber = "";
     } else if ((firstNumber.length > 0) && !firstNumberComplete) {
+        negAllow = true;
+        negFirst = false;
+        negSecond = true;
         for (op in operations) {
             operations[op].active = false;
         }
@@ -192,6 +235,9 @@ function multiplyClick(e) {
         operations.multiply.active = true;
         firstNumberComplete = true;
     } else {
+        negAllow = true;
+        negFirst = false;
+        negSecond = true;
         calculate(e);
         screenCurrent = "Ans x ";
         screen.textContent = screenCurrent;
@@ -208,6 +254,9 @@ function divideClick(e) {
     operations.squareRoot.active = false;
 
     if (operations.equals.active) {
+        negAllow = false;
+        negFirst = false;
+        negSecond = false;
         for (op in operations) {
             operations[op].active = false;
         }
@@ -216,6 +265,9 @@ function divideClick(e) {
         operations.divide.active = true;
         secondNumber = "";
     } else if ((firstNumber.length > 0) && !firstNumberComplete) {
+        negAllow = true;
+        negFirst = false;
+        negSecond = true;
         for (op in operations) {
             operations[op].active = false;
         }
@@ -224,6 +276,9 @@ function divideClick(e) {
         operations.divide.active = true;
         firstNumberComplete = true;
     } else {
+        negAllow = true;
+        negFirst = false;
+        negSecond = true;
         calculate(e);
         screenCurrent = "Ans / ";
         screen.textContent = screenCurrent;
@@ -240,6 +295,9 @@ function powerClick(e) {
     operations.squareRoot.active = false;
 
     if (operations.equals.active) {
+        negAllow = false;
+        negFirst = false;
+        negSecond = false;
         for (op in operations) {
             operations[op].active = false;
         }
@@ -248,6 +306,9 @@ function powerClick(e) {
         operations.power.active = true;
         secondNumber = "";
     } else if ((firstNumber.length > 0) && !firstNumberComplete) {
+        negAllow = true;
+        negFirst = false;
+        negSecond = true;
         for (op in operations) {
             operations[op].active = false;
         }
@@ -256,6 +317,9 @@ function powerClick(e) {
         operations.power.active = true;
         firstNumberComplete = true;
     } else {
+        negAllow = true;
+        negFirst = false;
+        negSecond = true;
         calculate(e);
         screenCurrent = "Ans ^ ";
         screen.textContent = screenCurrent;
@@ -287,8 +351,47 @@ function squareRootClick(c) {
         littleScreen.textContent = screenPrevious;
         secondNumber = "";
         operations.squareRoot.active = true;
+
+        negAllow = false;
+        negFirst = false;
+        negSecond = false;
     }
     
+}
+
+//Neg
+neg.addEventListener('click', negClick);
+
+function negClick(e) {
+    if (negAllow) {
+        if (negFirst) {
+            if (firstNumber[0] === "-") {
+                firstNumber = firstNumber.substring(1);
+                screenCurrent = firstNumber;
+                screen.textContent = screenCurrent;
+            }
+            else {
+                firstNumber = "-".concat(firstNumber);
+                screenCurrent = firstNumber;
+                screen.textContent = screenCurrent;
+            }
+        } else if (negSecond) {
+            let numberPos = screenCurrent.lastIndexOf(secondNumber);
+            if (secondNumber[0] === "(") {
+                screenCurrent = screenCurrent.slice(0, numberPos);
+                secondNumber = secondNumber.substring(2);
+                secondNumber = secondNumber.slice(0, -1); 
+                screenCurrent = screenCurrent.concat(secondNumber);
+                screen.textContent = screenCurrent;
+            }
+            else {
+                screenCurrent = screenCurrent.slice(0, numberPos);
+                secondNumber = "(-".concat(secondNumber, ")");
+                screenCurrent = screenCurrent.concat(secondNumber);
+                screen.textContent = screenCurrent;
+            }
+        }
+    }
 }
 
 //Equals
@@ -323,9 +426,17 @@ function equalsClick(e) {
         operations.equals.active = true;
         sqrtAllow = true;
     }
+
+    negAllow = false;
+    negFirst = false;
+    negSecond = false;
 }
 
 function calculate(e) {
+    if (secondNumber[0] === "(") {
+        secondNumber = secondNumber.substring(1);
+        secondNumber = secondNumber.slice(0, -1); 
+    }
     if (operations.add.active) {
         if (firstNumber.includes(".") || secondNumber.includes(".")) {
             answer = (parseFloat(firstNumber) + parseFloat(secondNumber)).toFixed(14);
@@ -472,4 +583,31 @@ function calculate(e) {
         secondNumber = "";
         operations.power.active = false;
     }
+}
+
+//All Clear
+allClear.addEventListener('click', allClearClick);
+
+function allClearClick(e) {
+    for (op in operations) {
+        operations[op].active = false;
+    }
+    firstNumber = "";
+    firstNumberComplete = false;
+
+    answer = "";
+    answerActive = false;
+
+    secondNumber = "";
+
+    littleScreen.textContent = "Single operations only -- Use keyboard or mouse";
+    screenPrevious = "";
+
+    screen.textContent = "0";
+    screenCurrent = "";    
+    sqrtAllow = false;
+
+    negAllow = true;
+    negFirst = true;
+    negSecond = false;
 }
