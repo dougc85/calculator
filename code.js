@@ -458,6 +458,7 @@ function squareRootClick(c) {
         littleScreen.textContent = screenPrevious;
         secondNumber = "";
         operations.squareRoot.active = true;
+        answerClickedFirst = false;
 
         negAllow = false;
         negFirst = false;
