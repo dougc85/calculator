@@ -88,7 +88,7 @@ body {
     font-family: arial;
 }
 
-#add {
+.plus {
     width: 80px;
     height: 150px;
     font-size: 28px;
@@ -134,7 +134,7 @@ body {
     justify-content: start;
 }
 
-#ans {
+.ans {
     height: 40px;
     font-size: 20px;
     background-color: #546747;
@@ -268,4 +268,9 @@ sup {
 
 #neg {
     font-size: 20px;
+}
+
+.green-clicked {
+    background-color: rgb(105, 129, 89);
+    border: 3px solid #aac97b;
 }

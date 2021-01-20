@@ -28,6 +28,28 @@ const divide = document.getElementById('divide');
 const screen = document.getElementById('screen');
 const littleScreen = document.getElementById('little-screen');
 
+const calculator = document.getElementById('calc-body');
+
+let changed = [];
+
+calculator.addEventListener('mousedown', changeColor);
+document.addEventListener('mouseup', changeBack);
+
+function changeColor(e) {
+    if (e.target.classList.contains('green')) {
+        e.target.classList.toggle('green-clicked');
+        changed = [e.target, 'green-clicked'];
+    }
+}
+
+function changeBack(e) {
+    if (changed.length === 2) {
+        changed[0].classList.toggle(changed[1]);
+        changed = [];
+    }
+}
+
+
 let operations = {
     add: {
         active: false,
@@ -115,8 +137,6 @@ function numberClick(e) {
             screenCurrent = screenCurrent.slice(0, -1).concat(e.target.textContent).concat(")");
             screen.textContent = screenCurrent;
             secondNumber = secondNumber.slice(0, -1).concat(e.target.textContent).concat(")");
-            console.log("screenCurrent", screenCurrent);
-            console.log("secondNum", secondNumber);
         } else {
             screenCurrent += e.target.textContent;
             screen.textContent = screenCurrent;
@@ -244,7 +264,9 @@ function addDecimal(e) {
         negAllow = false;
         negFirst = true;
         negSecond = false;
-    } else if (!firstNumberComplete && !(firstNumber.search(".") === -1)) {
+    } else if (!firstNumberComplete && !(firstNumber.search(/\./) === -1)) {
+        return
+    } else if (!firstNumberComplete) {
         screenCurrent += ".";
         screen.textContent = screenCurrent;
         firstNumber += "."
@@ -262,7 +284,7 @@ function addDecimal(e) {
         negAllow = true;
         negFirst = false;
         negSecond = true;
-    } else if (secondNumber.search(".") !== -1) {
+    } else if (secondNumber.search(/\./) === -1) {
         screenCurrent += ".";
         screen.textContent = screenCurrent;
         secondNumber += ".";
@@ -275,10 +297,13 @@ function addDecimal(e) {
 }
 
 
-//Add
+//Addition
 add.addEventListener('click', addClick);
 
 function addClick(e) {
+    if (screenCurrent.slice(-1) === " ") {
+        return;
+    }
     if (answerClickedFirst || answerClickedSecond) {
         answerClickedFirst = false;
         answerClickedSecond = false;
@@ -327,6 +352,10 @@ function addClick(e) {
 subtract.addEventListener('click', subtractClick);
 
 function subtractClick(e) {
+
+    if (screenCurrent.slice(-1) === " ") {
+        return;
+    }
 
     if (answerClickedFirst || answerClickedSecond) {
         answerClickedFirst = false;
@@ -378,6 +407,10 @@ multiply.addEventListener('click', multiplyClick);
 
 function multiplyClick(e) {
 
+    if (screenCurrent.slice(-1) === " ") {
+        return;
+    }
+
     if (answerClickedFirst || answerClickedSecond) {
         answerClickedFirst = false;
         answerClickedSecond = false;
@@ -428,6 +461,10 @@ divide.addEventListener('click', divideClick);
 
 function divideClick(e) {
 
+    if (screenCurrent.slice(-1) === " ") {
+        return;
+    }
+
     if (answerClickedFirst || answerClickedSecond) {
         answerClickedFirst = false;
         answerClickedSecond = false;
@@ -477,6 +514,10 @@ function divideClick(e) {
 power.addEventListener('click', powerClick);
 
 function powerClick(e) {
+
+    if (screenCurrent.slice(-1) === " ") {
+        return;
+    }
 
     if (answerClickedFirst || answerClickedSecond) {
         answerClickedFirst = false;
@@ -850,6 +891,9 @@ function allClearClick(e) {
 del.addEventListener('click', delClick);
 
 function delClick(e) {
+    console.log("firstNumber", firstNumber);
+    console.log('secondNumber', secondNumber);
+
     if (screenCurrent.slice(-3) === "Ans") {
         if (secondNumber.length !== 0) {
             screenCurrent = screenCurrent.slice(0, -3);
@@ -893,6 +937,9 @@ function delClick(e) {
             operations[op].active = false;
         }
         firstNumberComplete = false;
+        if ((screenCurrent.length >= 3) && (screenCurrent.slice(-3) === "Ans")) {
+            answerClickedFirst = true;
+        }
     } else if (screenCurrent.length === 1) {
         screenCurrent = String.fromCharCode(8203);
         screen.textContent = screenCurrent;
@@ -902,15 +949,12 @@ function delClick(e) {
         negAllow = false;
         negFirst = false;
         negSecond = false;
-    } else if (screenCurrent === "0.") {
-        screenCurrent = String.fromCharCode(8203);
+    } else if (secondNumber.length !== 0) {
+        screenCurrent = screenCurrent.slice(0, -1);
         screen.textContent = screenCurrent;
-        firstNumber = "";
-        firstNumberComplete = false;
-        sqrtAllow = false;
-        negAllow = false;
-        negFirst = false;
-        negSecond = false;
+        secondNumber = secondNumber.slice(0, -1);
+    } else if (screenCurrent.length === 0){
+        return;
     } else {
         screenCurrent = screenCurrent.slice(0, -1);
         screen.textContent = screenCurrent;
