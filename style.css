@@ -131,7 +131,7 @@ body {
 
 .row-ans {
     display: flex;
-    justify-content: start;
+    justify-content: flex-start;
 }
 
 .ans {
@@ -191,7 +191,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: end;
+    align-items: flex-end;
     padding: 0;
     height: 60px;
     background-color: rgb(235, 235, 235);

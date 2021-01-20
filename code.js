@@ -35,6 +35,110 @@ let changed = [];
 calculator.addEventListener('mousedown', changeColor);
 document.addEventListener('mouseup', changeBack);
 
+document.addEventListener('keydown', onKeyDown);
+document.addEventListener('keyup', onKeyUp);
+
+const nums = ['1','2','3','4','5','6','7','8','9','0'];
+const numElements = 
+{
+    "1":one,
+    "2":two,
+    "3":three,
+    "4":four,
+    "5":five,
+    "6":six,
+    "7":seven,
+    "8":eight,
+    "9":nine,
+    "0":zero
+}
+
+function onKeyDown(e) {
+    if ((e.key === "a") || (e.key === " ")){
+        answerClick(e);
+        changeColorKey(answerButton);
+    } else if ((e.key === "+") || (e.key === "p")) {
+        addClick(e);
+        changeColorKey(add);
+    } else if ((e.key === "m") || (e.key === "-")) {
+        subtractClick(e);
+        changeColorKey(subtract);
+    } else if ((e.key === "t") || (e.key === "x")) {
+        multiplyClick(e);
+        changeColorKey(multiply);
+    } else if ((e.key === "d") || (e.key === "/")) {
+        divideClick(e);
+        changeColorKey(divide);
+    } else if ((e.key === "n") || (e.key === "~")) {
+        negClick(e);
+        changeColorKey(neg);
+    } else if ((e.key === "^") || (e.key === "e")) {
+        powerClick(e);
+        changeColorKey(power);
+    } else if ((e.key === "√") || (e.key === "r")) {
+        squareRootClick(e);
+        changeColorKey(squareRoot);
+    } else if ((e.key === "Enter") || (e.key === "=")) {
+        equalsClick(e);
+        changeColorKey(equals);
+    } else if (e.key === "Backspace") {
+        delClick(e);
+        changeColorKey(del);
+    } else if (e.key === "Escape") {
+        allClearClick(e);
+        changeColorKey(allClear);
+    } else if (e.key === ".") {
+        addDecimal(e);
+        changeColorKey(decimal);
+    } else if (nums.includes(e.key)) {
+        numPress(e.key);
+        changeColorKey(numElements[e.key]);
+    }
+}
+
+function onKeyUp(e) {
+    if ((e.key === "a") || (e.key === " ")){
+        answerButton.classList.toggle('green-clicked');
+    } else if ((e.key === "+") || (e.key === "p")) {
+        add.classList.toggle('green-clicked');
+    } else if ((e.key === "m") || (e.key === "-")) {
+        subtract.classList.toggle('green-clicked');
+    } else if ((e.key === "t") || (e.key === "x")) {
+        multiply.classList.toggle('green-clicked');
+    } else if ((e.key === "d") || (e.key === "/")) {
+        divide.classList.toggle('green-clicked');
+    } else if ((e.key === "n") || (e.key === "~")) {
+        neg.classList.toggle('green-clicked');
+    } else if ((e.key === "^") || (e.key === "e")) {
+        power.classList.toggle('green-clicked');
+    } else if ((e.key === "√") || (e.key === "r")) {
+        squareRoot.classList.toggle('green-clicked');
+    } else if ((e.key === "Enter") || (e.key === "=")) {
+        equals.classList.toggle('yellow-clicked');
+    } else if (e.key === "Backspace") {
+        del.classList.toggle('red-clicked');
+    } else if (e.key === "Escape") {
+        allClear.classList.toggle('red-clicked');
+    } else if (e.key === ".") {
+        decimal.classList.toggle('green-clicked');
+    } else if (nums.includes(e.key)) {
+        numElements[e.key].classList.toggle('green-clicked');
+    }
+}
+
+function changeColorKey(element) {
+    if (element.classList.contains('green')) {
+        element.classList.toggle('green-clicked');
+        changed = [element, 'green-clicked'];
+    } else if (element.classList.contains('red')) {
+        element.classList.toggle('red-clicked');
+        changed = [element, 'red-clicked'];
+    } else if (element.classList.contains('yellow')) {
+        element.classList.toggle('yellow-clicked');
+        changed = [element, 'yellow-clicked'];
+    } 
+}
+
 function changeColor(e) {
     if (e.target.classList.contains('green')) {
         e.target.classList.toggle('green-clicked');
@@ -186,6 +290,85 @@ function numberClick(e) {
                 screenCurrent += e.target.textContent;
                 screen.textContent = screenCurrent;
                 secondNumber += e.target.textContent;
+                sqrtAllow = false;
+
+                negAllow = true;
+                negFirst = false;
+                negSecond = true;
+            }
+        }
+    }
+}
+
+//Number function for key presses
+
+function numPress(num) {
+    if (answerClickedFirst || answerClickedSecond) {
+        return;
+    }
+    if (operations.equals.active || operations.squareRoot.active) {
+        if (screenCurrent.length > 15) {
+            return;
+        }
+        screenCurrent = num;
+        screen.textContent = screenCurrent;
+        firstNumber = num;
+        firstNumberComplete = false;
+        for (op in operations) {
+            operations[op].active = false;
+        }
+        secondNumber = ""
+        sqrtAllow = true;
+
+        negAllow = true;
+        negFirst = true;
+        negSecond = false;
+
+    } else if (!firstNumberComplete) {
+        if (screenCurrent.length > 15) {
+            return;
+        }
+        if (firstNumber === "0") {
+            screenCurrent = num;
+            screen.textContent = screenCurrent;
+            firstNumber = num;
+            sqrtAllow = true;
+
+            negAllow = true;
+            negFirst = true;
+            negSecond = false;
+        } else {
+            screenCurrent += num;
+            screen.textContent = screenCurrent;
+            firstNumber += num;
+            sqrtAllow = true;
+
+            negAllow = true;
+            negFirst = true;
+            negSecond = false;
+        }
+    } else {
+        if (screenCurrent.length > 20) {
+            return;
+        }
+        if (screenCurrent.slice(-1) === ")") {
+            screenCurrent = screenCurrent.slice(0, -1).concat(num).concat(")");
+            screen.textContent = screenCurrent;
+            secondNumber = secondNumber.slice(0, -1).concat(num).concat(")");
+        } else {
+            if (secondNumber === "0") {
+                screenCurrent = screenCurrent.slice(0, -1).concat(num);
+                screen.textContent = screenCurrent;
+                secondNumber = num;
+                sqrtAllow = false;
+    
+                negAllow = true;
+                negFirst = false;
+                negSecond = true;
+            } else {
+                screenCurrent += num;
+                screen.textContent = screenCurrent;
+                secondNumber += num;
                 sqrtAllow = false;
 
                 negAllow = true;
