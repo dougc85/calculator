@@ -111,14 +111,22 @@ function numberClick(e) {
         negFirst = true;
         negSecond = false;
     } else {
-        screenCurrent += e.target.textContent;
-        screen.textContent = screenCurrent;
-        secondNumber += e.target.textContent;
-        sqrtAllow = false;
+        if (screenCurrent.slice(-1) === ")") {
+            screenCurrent = screenCurrent.slice(0, -1).concat(e.target.textContent).concat(")");
+            screen.textContent = screenCurrent;
+            secondNumber = secondNumber.slice(0, -1).concat(e.target.textContent).concat(")");
+            console.log("screenCurrent", screenCurrent);
+            console.log("secondNum", secondNumber);
+        } else {
+            screenCurrent += e.target.textContent;
+            screen.textContent = screenCurrent;
+            secondNumber += e.target.textContent;
+            sqrtAllow = false;
 
-        negAllow = true;
-        negFirst = false;
-        negSecond = true;
+            negAllow = true;
+            negFirst = false;
+            negSecond = true;
+        }
     }
 }
 
@@ -140,7 +148,7 @@ function answerClick(e) {
     }
 
     if (answerActive) {
-        if (operations.equals.active || operations.squareRoot.active) {
+        if (operations.equals.active || operations.squareRoot.active || screenCurrent === String.fromCharCode(8203)) {
             screenCurrent = "Ans";
             screen.textContent = screenCurrent;
             firstNumber = answer;
@@ -863,5 +871,49 @@ function delClick(e) {
             negSecond = false;
             answerClickedFirst = false;
         }
+    } else if (screenCurrent.slice(-1) === ")") {
+        negClick(e);
+    } else if (operations.equals.active || operations.squareRoot.active) {
+        screenCurrent = String.fromCharCode(8203);
+        screen.textContent = screenCurrent;
+        firstNumber = "";
+        firstNumberComplete = false;
+        sqrtAllow = false;
+        negAllow = false;
+        negFirst = false;
+        negSecond = false;
+    } else if (screenCurrent.slice(-1) === " ") {
+        screenCurrent = screenCurrent.slice(0, -3)
+        screen.textContent = screenCurrent;
+        sqrtAllow = true;
+        negAllow = true;
+        negFirst = true;
+        negSecond = false;
+        for (op in operations) {
+            operations[op].active = false;
+        }
+        firstNumberComplete = false;
+    } else if (screenCurrent.length === 1) {
+        screenCurrent = String.fromCharCode(8203);
+        screen.textContent = screenCurrent;
+        firstNumber = "";
+        firstNumberComplete = false;
+        sqrtAllow = false;
+        negAllow = false;
+        negFirst = false;
+        negSecond = false;
+    } else if (screenCurrent === "0.") {
+        screenCurrent = String.fromCharCode(8203);
+        screen.textContent = screenCurrent;
+        firstNumber = "";
+        firstNumberComplete = false;
+        sqrtAllow = false;
+        negAllow = false;
+        negFirst = false;
+        negSecond = false;
+    } else {
+        screenCurrent = screenCurrent.slice(0, -1);
+        screen.textContent = screenCurrent;
+        firstNumber = firstNumber.slice(0, -1);
     }
 }
