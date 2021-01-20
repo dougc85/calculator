@@ -109,6 +109,9 @@ function numberClick(e) {
         return;
     }
     if (operations.equals.active || operations.squareRoot.active) {
+        if (screenCurrent.length > 15) {
+            return;
+        }
         screenCurrent = e.target.textContent;
         screen.textContent = screenCurrent;
         firstNumber = e.target.textContent;
@@ -124,28 +127,56 @@ function numberClick(e) {
         negSecond = false;
 
     } else if (!firstNumberComplete) {
-        screenCurrent += e.target.textContent;
-        screen.textContent = screenCurrent;
-        firstNumber += e.target.textContent;
-        sqrtAllow = true;
+        if (screenCurrent.length > 15) {
+            return;
+        }
+        if (firstNumber === "0") {
+            screenCurrent = e.target.textContent;
+            screen.textContent = screenCurrent;
+            firstNumber = e.target.textContent;
+            sqrtAllow = true;
 
-        negAllow = true;
-        negFirst = true;
-        negSecond = false;
+            negAllow = true;
+            negFirst = true;
+            negSecond = false;
+        } else {
+            screenCurrent += e.target.textContent;
+            screen.textContent = screenCurrent;
+            firstNumber += e.target.textContent;
+            sqrtAllow = true;
+
+            negAllow = true;
+            negFirst = true;
+            negSecond = false;
+        }
     } else {
+        if (screenCurrent.length > 20) {
+            return;
+        }
         if (screenCurrent.slice(-1) === ")") {
             screenCurrent = screenCurrent.slice(0, -1).concat(e.target.textContent).concat(")");
             screen.textContent = screenCurrent;
             secondNumber = secondNumber.slice(0, -1).concat(e.target.textContent).concat(")");
         } else {
-            screenCurrent += e.target.textContent;
-            screen.textContent = screenCurrent;
-            secondNumber += e.target.textContent;
-            sqrtAllow = false;
+            if (secondNumber === "0") {
+                screenCurrent = screenCurrent.slice(0, -1).concat(e.target.textContent);
+                screen.textContent = screenCurrent;
+                secondNumber = e.target.textContent;
+                sqrtAllow = false;
+    
+                negAllow = true;
+                negFirst = false;
+                negSecond = true;
+            } else {
+                screenCurrent += e.target.textContent;
+                screen.textContent = screenCurrent;
+                secondNumber += e.target.textContent;
+                sqrtAllow = false;
 
-            negAllow = true;
-            negFirst = false;
-            negSecond = true;
+                negAllow = true;
+                negFirst = false;
+                negSecond = true;
+            }
         }
     }
 }
@@ -202,6 +233,11 @@ function zeroClick(e) {
     if (answerClickedFirst || answerClickedSecond) {
         return;
     }
+
+    if (((firstNumber === "0") && !firstNumberComplete) || (secondNumber === "0")) {
+        return;
+    }
+
     if (operations.equals.active || operations.squareRoot.active) {
         screenCurrent = "0";
         screen.textContent = screenCurrent;
@@ -891,8 +927,6 @@ function allClearClick(e) {
 del.addEventListener('click', delClick);
 
 function delClick(e) {
-    console.log("firstNumber", firstNumber);
-    console.log('secondNumber', secondNumber);
 
     if (screenCurrent.slice(-3) === "Ans") {
         if (secondNumber.length !== 0) {
