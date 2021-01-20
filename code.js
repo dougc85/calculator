@@ -91,8 +91,9 @@ function numberClick(e) {
         screen.textContent = screenCurrent;
         firstNumber = e.target.textContent;
         firstNumberComplete = false;
-        operations.equals.active = false;
-        operations.squareRoot.active = false;
+        for (op in operations) {
+            operations[op].active = false;
+        }
         secondNumber = ""
         sqrtAllow = true;
 
@@ -100,7 +101,7 @@ function numberClick(e) {
         negFirst = true;
         negSecond = false;
 
-    }else if (!firstNumberComplete) {
+    } else if (!firstNumberComplete) {
         screenCurrent += e.target.textContent;
         screen.textContent = screenCurrent;
         firstNumber += e.target.textContent;
@@ -159,7 +160,7 @@ function answerClick(e) {
             secondNumber = answer;
             answerClickedSecond = true;
 
-            negAllow - true;
+            negAllow = true;
             negFirst = false;
             negSecond = true;
         }
@@ -173,13 +174,98 @@ function zeroClick(e) {
     if (answerClickedFirst || answerClickedSecond) {
         return;
     }
+    if (operations.equals.active || operations.squareRoot.active) {
+        screenCurrent = "0";
+        screen.textContent = screenCurrent;
+        firstNumber = "0";
+        firstNumberComplete = false;
+        operations.equals.active = false;
+        operations.squareRoot.active = false;
+        secondNumber = ""
+        sqrtAllow = true;
+
+        negAllow = false;
+        negFirst = true;
+        negSecond = false;
+
+    } else if (!firstNumberComplete && (firstNumber !== "0")) {
+        screenCurrent += "0";
+        screen.textContent = screenCurrent;
+        firstNumber += "0";
+        sqrtAllow = true;
+    } else if ((secondNumber.length === 0) && (firstNumber !== "0")) {
+        screenCurrent += "0";
+        screen.textContent = screenCurrent;
+        secondNumber += "0";
+        sqrtAllow = false;
+
+        negAllow = false;
+        negFirst = false;
+        negSecond = true;
+    } else {
+        screenCurrent += "0";
+        screen.textContent = screenCurrent;
+        secondNumber += "0"
+        sqrtAllow = false;
+
+        negAllow = true;
+        negFirst = false;
+        negSecond = true;
+    }
 }
 
 //Decimal
 
-// if (answerClickedFirst || answerClickedSecond) {
-//     return;
-// }
+decimal.addEventListener('click', addDecimal);
+
+function addDecimal(e) {
+    if (answerClickedFirst || answerClickedSecond) {
+        return;
+    }
+
+    if (operations.equals.active || operations.squareRoot.active || (firstNumber.length === 0)) {
+        screenCurrent = "0."
+        screen.textContent = screenCurrent;
+        firstNumber = "0."
+        firstNumberComplete = false;
+        operations.equals.active = false;
+        operations.squareRoot.active = false;
+        secondNumber = ""
+        sqrtAllow = true;
+
+        negAllow = false;
+        negFirst = true;
+        negSecond = false;
+    } else if (!firstNumberComplete && !(firstNumber.search(".") === -1)) {
+        screenCurrent += ".";
+        screen.textContent = screenCurrent;
+        firstNumber += "."
+        sqrtAllow = true;
+
+        negAllow = true;
+        negFirst = true;
+        negSecond = false;
+    } else if (secondNumber.length === 0) {
+        screenCurrent += "0.";
+        screen.textContent = screenCurrent;
+        secondNumber += "0."
+        sqrtAllow = false;
+
+        negAllow = true;
+        negFirst = false;
+        negSecond = true;
+    } else if (secondNumber.search(".") !== -1) {
+        screenCurrent += ".";
+        screen.textContent = screenCurrent;
+        secondNumber += ".";
+        sqrtAllow = false;
+
+        negAllow = true;
+        negFirst = false;
+        negSecond = true;
+    }
+}
+
 
 //Add
 add.addEventListener('click', addClick);
@@ -505,7 +591,6 @@ function negClick(e) {
                     screenCurrent = screenCurrent.slice(0, -6).concat("Ans");
                     screen.textContent = screenCurrent;
                 } else {
-                    console.log('here');
                     secondNumber = (secondNumber * (-1)).toString();
                     screenCurrent = screenCurrent.slice(0, -3).concat("(-Ans)");
                     screen.textContent = screenCurrent;
@@ -750,4 +835,33 @@ function allClearClick(e) {
 
     answerClickedFirst = false;
     answerClickedSecond = false;
+}
+
+//Delete
+
+del.addEventListener('click', delClick);
+
+function delClick(e) {
+    if (screenCurrent.slice(-3) === "Ans") {
+        if (secondNumber.length !== 0) {
+            screenCurrent = screenCurrent.slice(0, -3);
+            screen.textContent = screenCurrent;
+            secondNumber = "";
+            answerClickedSecond = false;
+
+            negAllow = false;
+            negFirst = false;
+            negSecond = true;
+        } else {
+            screenCurrent = String.fromCharCode(8203);
+            screen.textContent = screenCurrent;
+            firstNumber = "";
+            firstNumberComplete = false;
+            sqrtAllow = false;
+            negAllow = false;
+            negFirst = false;
+            negSecond = false;
+            answerClickedFirst = false;
+        }
+    }
 }
