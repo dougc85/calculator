@@ -39,7 +39,22 @@ function changeColor(e) {
     if (e.target.classList.contains('green')) {
         e.target.classList.toggle('green-clicked');
         changed = [e.target, 'green-clicked'];
-    }
+    } else if (e.target.classList.contains('red')) {
+        e.target.classList.toggle('red-clicked');
+        changed = [e.target, 'red-clicked'];
+    } else if (e.target.classList.contains('yellow')) {
+        e.target.classList.toggle('yellow-clicked');
+        changed = [e.target, 'yellow-clicked'];
+    } else if (e.target.parentNode.classList.contains('green')) {
+        e.target.parentNode.classList.toggle('green-clicked');
+        changed = [e.target.parentNode, 'green-clicked'];
+    } else if (e.target.parentNode.classList.contains('red')) {
+        e.target.parentNode.classList.toggle('red-clicked');
+        changed = [e.target.parentNode, 'red-clicked'];
+    } else if (e.target.parentNode.classList.contains('yellow')) {
+        e.target.parentNode.classList.toggle('yellow-clicked');
+        changed = [e.target.parentNode, 'yellow-clicked'];
+    } 
 }
 
 function changeBack(e) {
@@ -989,6 +1004,10 @@ function delClick(e) {
         secondNumber = secondNumber.slice(0, -1);
     } else if (screenCurrent.length === 0){
         return;
+    } else if (screenCurrent.slice(0, 2).includes('-')) {
+        screenCurrent = screenCurrent.slice(1);
+        screen.textContent = screenCurrent;
+        firstNumber = (firstNumber * -1).toString();
     } else {
         screenCurrent = screenCurrent.slice(0, -1);
         screen.textContent = screenCurrent;

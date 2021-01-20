@@ -220,7 +220,7 @@ body {
     padding-right: 8px;
 }
 
-#equals {
+.equals {
     background-color: #fab73d;
     color: #2b331f;
 }
@@ -273,4 +273,18 @@ sup {
 .green-clicked {
     background-color: rgb(105, 129, 89);
     border: 3px solid #aac97b;
+}
+
+.red-clicked {
+    background-color: rgb(226, 74, 74);
+    border: 3px solid rgb(255, 144, 144);
+}
+
+.yellow-clicked {
+    background-color: #fda708;
+    border: 3px solid #fcda6c;
+}
+
+.pointer {
+    cursor: pointer;
 }
